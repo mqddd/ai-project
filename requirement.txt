@@ -1,6 +1,6 @@
 cssselect2==0.4.1
 lxml==4.6.3
-numpy==1.21.2
+numpy==1.19.5
 Pillow==8.3.2
 pygame==2.0.1
 reportlab==3.6.1
