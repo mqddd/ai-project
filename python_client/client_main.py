@@ -1,54 +1,21 @@
 import random
 from base import BaseAgent, Action
 
+import utils
+import routing_analyzer
 
 class Agent(BaseAgent):
 
     def do_turn(self) -> Action:
-        print(self.grid)
+        if self.turn_count == 1:
+            self.env_dict = utils.get_all_env_elements_indices(self.grid, self.grid_height, self.grid_width)
+        else:
+            pass
+        routingAnalyzer = routing_analyzer.RoutingAnalyzer(self.grid)
+        #came_from, cost = routingAnalyzer.a_star_search(our_agent[0], yellow_gems[0])
+
         return random.choice(
             [Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT, Action.TELEPORT, Action.NOOP, Action.TRAP])
-
-    def get_yellow_gems_index(self):
-        index = []
-        for i in range(self.grid_height):
-            for j in range(self.grid_width):
-                if self.grid[i][j]=='1':
-                    index.append([i, j])
-        return index
-
-    def get_green_gems_index(self):
-        index = []
-        for i in range(self.grid_height):
-            for j in range(self.grid_width):
-                if self.grid[i][j]=='2':
-                    index.append([i, j])
-        return index
-
-    def get_red_gems_index(self):
-        index = []
-        for i in range(self.grid_height):
-            for j in range(self.grid_width):
-                if self.grid[i][j]=='3':
-                    index.append([i, j])
-        return index
-
-    def get_blue_gems_index(self):
-        index = []
-        for i in range(self.grid_height):
-            for j in range(self.grid_width):
-                if self.grid[i][j]=='4':
-                    index.append([i, j])
-        return index
-
-    def get_teleports_index(self):
-        index = []
-        for i in range(self.grid_height):
-            for j in range(self.grid_width):
-                if self.grid[i][j]=='T':
-                    index.append([i, j])
-        return index
-
 
 
 if __name__ == '__main__':
