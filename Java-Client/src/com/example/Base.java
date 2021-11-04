@@ -110,6 +110,7 @@ public abstract class Base {
         Up("TOP"), Down("DOWN"), Left("LEFT"), Right("RIGHT"), NoOp("NOOP"), Teleport("TELEPORT"), Trap("TRAP");
 
         private final String command;
+
         Action(String command) {
             this.command = command;
         }
