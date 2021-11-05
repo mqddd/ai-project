@@ -1,12 +1,13 @@
 package com.example.model;
 
-public class RedGemTile extends BaseTile {
+public enum RedGemTile {
+    REWARD(75),
+    REQUIRED_SCORE(0),
+    MAXIMUM_REACHABLE_TIMES(15);
 
-    public static final int REWARD = 75;
-    public static final int REQUIRED_SCORE = 0;
-    public static final int MAXIMUM_REACHABLE_TIMES = 15;
+    private final int value;
 
-    public RedGemTile(int x, int y) {
-        super(x, y, TileType.RED_GEM);
+    RedGemTile(int value) {
+        this.value = value;
     }
 }

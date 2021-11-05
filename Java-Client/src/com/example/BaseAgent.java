@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public abstract class Base {
+public abstract class BaseAgent {
     private Socket connection;
     private final String serverIp;
     private final int serverPort;
@@ -64,19 +64,19 @@ public abstract class Base {
         return grid;
     }
 
-    public Base() {
+    public BaseAgent() {
         this(DEFAULT_SERVER_IP, DEFAULT_SERVER_PORT);
     }
 
-    public Base(String serverIp) {
+    public BaseAgent(String serverIp) {
         this(serverIp, DEFAULT_SERVER_PORT);
     }
 
-    public Base(int serverPort) {
+    public BaseAgent(int serverPort) {
         this(DEFAULT_SERVER_IP, serverPort);
     }
 
-    public Base(String serverIp, int serverPort) {
+    public BaseAgent(String serverIp, int serverPort) {
         this.serverPort = serverPort;
         this.serverIp = serverIp;
         try {
@@ -107,7 +107,7 @@ public abstract class Base {
     }
 
     public enum Action {
-        Up("TOP"), Down("DOWN"), Left("LEFT"), Right("RIGHT"), NoOp("NOOP"), Teleport("TELEPORT"), Trap("TRAP");
+        Up("UP"), Down("DOWN"), Left("LEFT"), Right("RIGHT"), NoOp("NOOP"), Teleport("TELEPORT"), Trap("TRAP");
 
         private final String command;
 
@@ -124,9 +124,9 @@ public abstract class Base {
         for (int i = 0; i < this.agentCount; i++, count++) {
             agentScores[i] = Integer.parseInt(dataArray[count]);
         }
-        this.grid = new String[gridWidth][gridHeight];
-        for (int i = 0; i < gridWidth; i++) {
-            for (int j = 0; j < gridHeight; j++, count++) {
+        this.grid = new String[gridHeight][gridWidth];
+        for (int i = 0; i < gridHeight; i++) {
+            for (int j = 0; j < gridWidth; j++, count++) {
                 this.grid[i][j] = dataArray[count];
             }
         }
@@ -138,6 +138,9 @@ public abstract class Base {
         connect();
         while (true) {
             var data = this.bufferedReader.readLine();
+            while (this.bufferedReader.ready()) {
+                data = this.bufferedReader.readLine();
+            }
             if (data.contains("finish!")) {
                 return;
             }
