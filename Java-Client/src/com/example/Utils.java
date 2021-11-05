@@ -27,23 +27,41 @@ public class Utils {
         this.teleportCost = this.teleportTiles.size() - 1;
     }
 
+    public void resetProperties() {
+        this.remainedYellowGems = new LinkedList<>();
+        this.remainedGreenGems = new LinkedList<>();
+        this.remainedRedGems = new LinkedList<>();
+        this.remainedBlueGems = new LinkedList<>();
+        this.teleportTiles = new LinkedList<>();
+        this.initProperties();
+    }
+
     private void initProperties() {
         for (int i = 0; i < this.agent.getGrid().length; i++) {
             for (int j = 0; j < this.agent.getGrid()[0].length; j++) {
                 if (this.agent.getGrid()[i][j].contains(TileType.YELLOW_GEM.getValue())) {
-                    this.remainedYellowGems.add(new Tile(i, j, TileType.YELLOW_GEM));
+                    Tile yellowGem = new Tile(i, j, TileType.YELLOW_GEM);
+                    if (!this.getAgent().getBlockedGems().contains(yellowGem))
+                        this.remainedYellowGems.add(yellowGem);
                 }
                 if (this.agent.getGrid()[i][j].contains(TileType.GREEN_GEM.getValue())) {
-                    this.remainedGreenGems.add(new Tile(i, j, TileType.GREEN_GEM));
+                    Tile greenGem = new Tile(i, j, TileType.GREEN_GEM);
+                    if (!this.getAgent().getBlockedGems().contains(greenGem))
+                        this.remainedGreenGems.add(greenGem);
                 }
                 if (this.agent.getGrid()[i][j].contains(TileType.RED_GEM.getValue())) {
-                    this.remainedRedGems.add(new Tile(i, j, TileType.RED_GEM));
+                    Tile redGem = new Tile(i, j, TileType.RED_GEM);
+                    if (!this.getAgent().getBlockedGems().contains(redGem))
+                        this.remainedRedGems.add(redGem);
                 }
                 if (this.agent.getGrid()[i][j].contains(TileType.BLUE_GEM.getValue())) {
-                    this.remainedBlueGems.add(new Tile(i, j, TileType.BLUE_GEM));
+                    Tile blueGem = new Tile(i, j, TileType.BLUE_GEM);
+                    if (!this.getAgent().getBlockedGems().contains(blueGem))
+                        this.remainedBlueGems.add(blueGem);
                 }
                 if (this.agent.getGrid()[i][j].contains(TileType.TELEPORT.getValue())) {
-                    this.teleportTiles.add(new Tile(i, j, TileType.TELEPORT));
+                    Tile teleport = new Tile(i, j, TileType.TELEPORT);
+                    this.teleportTiles.add(teleport);
                 }
                 if (this.agent.getGrid()[i][j].contains(String.valueOf(agent.getCharacter()))) {
                     this.myAgentTile = createTile(i, j);
@@ -52,7 +70,7 @@ public class Utils {
         }
     }
 
-    public Tile createTile(int x, int y) {
+    private Tile createTile(int x, int y) {
         if (this.getAgent().getGrid()[x][y].contains(TileType.EMPTY.getValue()))
             return new Tile(x, y, TileType.EMPTY);
         else if (this.getAgent().getGrid()[x][y].contains(TileType.TELEPORT.getValue()))

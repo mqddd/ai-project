@@ -5,6 +5,8 @@ import com.example.logic.OrderingAnalyzer;
 import com.example.logic.RoutingAnalyzer;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Agent extends BaseAgent {
 
@@ -12,6 +14,7 @@ public class Agent extends BaseAgent {
     private int collectedGreenGems;
     private int collectedRedGems;
     private int collectedBlueGems;
+    private Set<Tile> blockedGems;
 
     public Agent() {
         super();
@@ -23,6 +26,7 @@ public class Agent extends BaseAgent {
         this.collectedGreenGems = 0;
         this.collectedRedGems = 0;
         this.collectedBlueGems = 0;
+        this.blockedGems = new HashSet<>();
     }
 
     public Agent(String serverIp) {
@@ -37,7 +41,7 @@ public class Agent extends BaseAgent {
     public Action doTurn() {
         Utils utils = new Utils(this);
         OrderingAnalyzer orderingAnalyzer = new OrderingAnalyzer(utils);
-        RoutingAnalyzer routingAnalyzer = new RoutingAnalyzer(utils);
+        RoutingAnalyzer routingAnalyzer = new RoutingAnalyzer(utils, orderingAnalyzer);
         Tile optimalGoal = orderingAnalyzer.getOptimalGoal(utils.getMyAgentTile());
         return routingAnalyzer.getNextAction(utils.getMyAgentTile(), optimalGoal);
     }
@@ -77,5 +81,13 @@ public class Agent extends BaseAgent {
 
     public void setCollectedBlueGems(int collectedBlueGems) {
         this.collectedBlueGems = collectedBlueGems;
+    }
+
+    public Set<Tile> getBlockedGems() {
+        return blockedGems;
+    }
+
+    public void setBlockedGems(Set<Tile> blockedGems) {
+        this.blockedGems = blockedGems;
     }
 }

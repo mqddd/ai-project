@@ -1,17 +1,15 @@
-package com.example.model.dto;
-
-import com.example.model.Tile;
+package com.example.model;
 
 import java.util.List;
 
-public class BFSSearchResponseDTO {
+public class BFSSearchResponse {
     private List<Tile> path;
     private int cost;
     private Tile goal;
     private Tile source;
     private int goalLevel;
 
-    public BFSSearchResponseDTO(List<Tile> path, int cost, Tile goal, Tile source, int goalLevel) {
+    public BFSSearchResponse(List<Tile> path, int cost, Tile goal, Tile source, int goalLevel) {
         this.path = path;
         this.cost = cost;
         this.goal = goal;

@@ -2,34 +2,65 @@ package com.example.logic;
 
 import com.example.BaseAgent;
 import com.example.Utils;
-import com.example.model.Tile;
-import com.example.model.TileType;
-import com.example.model.dto.BFSSearchResponseDTO;
+import com.example.model.*;
 
 import java.util.*;
 
 public class RoutingAnalyzer {
 
     private Utils utils;
+    private OrderingAnalyzer orderingAnalyzer;
 
-    public RoutingAnalyzer(Utils utils) {
+    public RoutingAnalyzer(Utils utils, OrderingAnalyzer orderingAnalyzer) {
         this.utils = utils;
+        this.orderingAnalyzer = orderingAnalyzer;
     }
 
     public BaseAgent.Action getNextAction(Tile myAgentTile, Tile goalTile) {
-        BFSSearchResponseDTO bfsSearchResponseDTO = bfsSearch(myAgentTile, goalTile);
+        BFSSearchResponse bfsSearchResponse = bfsSearch(myAgentTile, goalTile);
+        while (bfsSearchResponse == null) {
+            utils.getAgent().getBlockedGems().add(goalTile);
+            utils.resetProperties();
+            goalTile = orderingAnalyzer.getOptimalGoal(myAgentTile);
+            if (goalTile == null)
+                break;
+            bfsSearchResponse = bfsSearch(myAgentTile, goalTile);
+        }
         List<Tile> path;
-        if (bfsSearchResponseDTO != null) {
-            path = bfsSearchResponseDTO.getPath();
+        if (bfsSearchResponse != null) {
+            path = bfsSearchResponse.getPath();
+            if (path.size() == 1) {
+                switch (goalTile.getType()) {
+                    case YELLOW_GEM:
+                        if (utils.getAgent().getAgentScores()[0] - 1 >= YellowGemTile.REQUIRED_SCORE.getValue())
+                            utils.getAgent().setCollectedYellowGems(utils.getAgent().getCollectedYellowGems() + 1);
+                        break;
+                    case GREEN_GEM:
+                        if (utils.getAgent().getAgentScores()[0] - 1 >= GreenGemTile.REQUIRED_SCORE.getValue())
+                            utils.getAgent().setCollectedGreenGems(utils.getAgent().getCollectedGreenGems() + 1);
+                        break;
+                    case RED_GEM:
+                        if (utils.getAgent().getAgentScores()[0] - 1 >= RedGemTile.REQUIRED_SCORE.getValue())
+                            utils.getAgent().setCollectedRedGems(utils.getAgent().getCollectedRedGems() + 1);
+                        break;
+                    case BLUE_GEM:
+                        if (utils.getAgent().getAgentScores()[0] - 1 >= BlueGemTile.REQUIRED_SCORE.getValue())
+                            utils.getAgent().setCollectedBlueGems(utils.getAgent().getCollectedBlueGems() + 1);
+                        break;
+                    default:
+                        throw new IllegalStateException("goal type should be of gem!");
+                }
+            }
             System.out.println(utils.getAgent().getTurnCount());
             System.out.println("agent: " + myAgentTile.toString());
             System.out.println("goal: " + goalTile.toString());
             System.out.println("path: " + path);
-            System.out.println("cost to gaol: " + bfsSearchResponseDTO.getCost());
+            System.out.println("cost to gaol: " + bfsSearchResponse.getCost());
             System.out.println("agent score: " + utils.getAgent().getAgentScores()[0]);
             System.out.println("_______________________________________");
-        } else
+        } else {
             return BaseAgent.Action.NoOp;
+        }
         if (path.isEmpty())
             return BaseAgent.Action.NoOp;
         return getNextStep(myAgentTile, path.get(0));
@@ -49,7 +80,7 @@ public class RoutingAnalyzer {
         else throw new IllegalStateException("unknown step!");
     }
 
-    private BFSSearchResponseDTO bfsSearch(Tile myAgentTile, Tile goalTile) {
+    private BFSSearchResponse bfsSearch(Tile myAgentTile, Tile goalTile) {
         PriorityQueue<Node> frontier = new PriorityQueue<>();
         Set<Tile> exploredSet = new HashSet<>();
 
@@ -61,7 +92,7 @@ public class RoutingAnalyzer {
             Node current = frontier.remove();
 
             if (current.currentTile.equals(goalTile))
-                return new BFSSearchResponseDTO(
+                return new BFSSearchResponse(
                         current.cameFrom,
                         current.costUntilHere,
                         goalTile,
