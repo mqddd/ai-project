@@ -13,39 +13,39 @@ public class Utils {
     private List<Tile> remainedBlueGems;
     private List<Tile> teleportTiles;
     private Tile myAgentTile;
-    private Agent myAgent;
+    private Agent agent;
     private int teleportCost;
 
-    public Utils(Agent myAgent) {
+    public Utils(Agent agent) {
         this.remainedYellowGems = new LinkedList<>();
         this.remainedGreenGems = new LinkedList<>();
         this.remainedRedGems = new LinkedList<>();
         this.remainedBlueGems = new LinkedList<>();
         this.teleportTiles = new LinkedList<>();
-        this.myAgent = myAgent;
+        this.agent = agent;
         this.initProperties();
         this.teleportCost = this.teleportTiles.size() - 1;
     }
 
     private void initProperties() {
-        for (int i = 0; i < this.myAgent.getGrid().length; i++) {
-            for (int j = 0; j < this.myAgent.getGrid()[0].length; j++) {
-                if (this.myAgent.getGrid()[i][j].contains("1")) {
+        for (int i = 0; i < this.agent.getGrid().length; i++) {
+            for (int j = 0; j < this.agent.getGrid()[0].length; j++) {
+                if (this.agent.getGrid()[i][j].contains(TileType.YELLOW_GEM.getValue())) {
                     this.remainedYellowGems.add(new Tile(i, j, TileType.YELLOW_GEM));
                 }
-                if (this.myAgent.getGrid()[i][j].contains("2")) {
+                if (this.agent.getGrid()[i][j].contains(TileType.GREEN_GEM.getValue())) {
                     this.remainedGreenGems.add(new Tile(i, j, TileType.GREEN_GEM));
                 }
-                if (this.myAgent.getGrid()[i][j].contains("3")) {
+                if (this.agent.getGrid()[i][j].contains(TileType.RED_GEM.getValue())) {
                     this.remainedRedGems.add(new Tile(i, j, TileType.RED_GEM));
                 }
-                if (this.myAgent.getGrid()[i][j].contains("4")) {
+                if (this.agent.getGrid()[i][j].contains(TileType.BLUE_GEM.getValue())) {
                     this.remainedBlueGems.add(new Tile(i, j, TileType.BLUE_GEM));
                 }
-                if (this.myAgent.getGrid()[i][j].contains("T")) {
+                if (this.agent.getGrid()[i][j].contains(TileType.TELEPORT.getValue())) {
                     this.teleportTiles.add(new Tile(i, j, TileType.TELEPORT));
                 }
-                if (this.myAgent.getGrid()[i][j].contains(String.valueOf(myAgent.getCharacter()))) {
+                if (this.agent.getGrid()[i][j].contains(String.valueOf(agent.getCharacter()))) {
                     this.myAgentTile = createTile(i, j);
                 }
             }
@@ -53,19 +53,19 @@ public class Utils {
     }
 
     public Tile createTile(int x, int y) {
-        if (this.getMyAgent().getGrid()[x][y].contains("E"))
+        if (this.getAgent().getGrid()[x][y].contains(TileType.EMPTY.getValue()))
             return new Tile(x, y, TileType.EMPTY);
-        else if (this.getMyAgent().getGrid()[x][y].contains("T"))
+        else if (this.getAgent().getGrid()[x][y].contains(TileType.TELEPORT.getValue()))
             return new Tile(x, y, TileType.TELEPORT);
-        else if (this.getMyAgent().getGrid()[x][y].contains("1"))
+        else if (this.getAgent().getGrid()[x][y].contains(TileType.YELLOW_GEM.getValue()))
             return new Tile(x, y, TileType.YELLOW_GEM);
-        else if (this.getMyAgent().getGrid()[x][y].contains("2"))
+        else if (this.getAgent().getGrid()[x][y].contains(TileType.GREEN_GEM.getValue()))
             return new Tile(x, y, TileType.GREEN_GEM);
-        else if (this.getMyAgent().getGrid()[x][y].contains("3"))
+        else if (this.getAgent().getGrid()[x][y].contains(TileType.RED_GEM.getValue()))
             return new Tile(x, y, TileType.RED_GEM);
-        else if (this.getMyAgent().getGrid()[x][y].contains("4"))
+        else if (this.getAgent().getGrid()[x][y].contains(TileType.BLUE_GEM.getValue()))
             return new Tile(x, y, TileType.BLUE_GEM);
-        else if (this.getMyAgent().getGrid()[x][y].contains("W"))
+        else if (this.getAgent().getGrid()[x][y].contains(TileType.WALL.getValue()))
             return new Tile(x, y, TileType.WALL);
         else throw new IllegalStateException("map isn't valid!");
     }
@@ -118,12 +118,12 @@ public class Utils {
         this.myAgentTile = myAgentTile;
     }
 
-    public Agent getMyAgent() {
-        return myAgent;
+    public Agent getAgent() {
+        return agent;
     }
 
-    public void setMyAgent(Agent myAgent) {
-        this.myAgent = myAgent;
+    public void setAgent(Agent agent) {
+        this.agent = agent;
     }
 
     public int getTeleportCost() {

@@ -1,8 +1,8 @@
 package com.example;
 
 import com.example.model.Tile;
-import com.example.service.OrderingAnalyzer;
-import com.example.service.RoutingAnalyzer;
+import com.example.logic.OrderingAnalyzer;
+import com.example.logic.RoutingAnalyzer;
 
 import java.io.IOException;
 

@@ -14,4 +14,8 @@ public enum TileType {
     TileType(String value) {
         this.value = value;
     }
+
+    public String getValue() {
+        return value;
+    }
 }

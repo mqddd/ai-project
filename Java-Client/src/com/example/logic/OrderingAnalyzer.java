@@ -1,8 +1,7 @@
-package com.example.service;
+package com.example.logic;
 
 import com.example.Utils;
-import com.example.model.Tile;
-import com.example.model.TileType;
+import com.example.model.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,11 +15,11 @@ public class OrderingAnalyzer {
     }
 
     public Tile getOptimalGoal(Tile myAgentTile) {
-        List<Tile> allGems = new LinkedList<>();
-        allGems.addAll(utils.getRemainedYellowGems());
-        allGems.addAll(utils.getRemainedGreenGems());
-        allGems.addAll(utils.getRemainedRedGems());
-        allGems.addAll(utils.getRemainedBlueGems());
+        List<Tile> allGems = concatenateLists(
+                utils.getRemainedYellowGems(),
+                utils.getRemainedGreenGems(),
+                utils.getRemainedRedGems(),
+                utils.getRemainedBlueGems());
 
         int minCost = Integer.MAX_VALUE;
         Tile optimalGoal = null;
@@ -35,35 +34,42 @@ public class OrderingAnalyzer {
         return optimalGoal;
     }
 
+    private List<Tile> concatenateLists(List<Tile>... lists) {
+        List<Tile> result = new LinkedList<>();
+        for (List<Tile> list : lists)
+            result.addAll(list);
+        return result;
+    }
+
     private int heuristic(Tile myAgentTile, Tile goalTile) {
         return Math.abs(myAgentTile.getX() - goalTile.getX()) + Math.abs(myAgentTile.getY() - goalTile.getY());
     }
 
     private boolean possibleToGetGem(Tile myAgentTile, Tile goalTile) {
         int minCostToGoal = heuristic(myAgentTile, goalTile);
-        int myAgentScore = utils.getMyAgent().getAgentScores()[0];
+        int myAgentScore = utils.getAgent().getAgentScores()[0];
         int requiredScore;
         if (goalTile.getType().equals(TileType.YELLOW_GEM))
-            requiredScore = 0;
+            requiredScore = YellowGemTile.REQUIRED_SCORE.getValue();
         else if (goalTile.getType().equals(TileType.GREEN_GEM))
-            requiredScore = 15;
+            requiredScore = GreenGemTile.REQUIRED_SCORE.getValue();
         else if (goalTile.getType().equals(TileType.RED_GEM))
-            requiredScore = 50;
+            requiredScore = RedGemTile.REQUIRED_SCORE.getValue();
         else if (goalTile.getType().equals(TileType.BLUE_GEM))
-            requiredScore = 140;
+            requiredScore = BlueGemTile.REQUIRED_SCORE.getValue();
         else throw new IllegalStateException("goal should be gem!");
         if ((myAgentScore - minCostToGoal) >= requiredScore) {
             if (goalTile.getType().equals(TileType.YELLOW_GEM)) {
-                return utils.getMyAgent().getCollectedYellowGems() < 15;
+                return utils.getAgent().getCollectedYellowGems() < YellowGemTile.MAXIMUM_ACHIEVABLE_TIMES.getValue();
             }
             else if (goalTile.getType().equals(TileType.GREEN_GEM)) {
-                return utils.getMyAgent().getCollectedGreenGems() < 8;
+                return utils.getAgent().getCollectedGreenGems() < GreenGemTile.MAXIMUM_ACHIEVABLE_TIMES.getValue();
             }
             else if (goalTile.getType().equals(TileType.RED_GEM)) {
-                return utils.getMyAgent().getCollectedRedGems() < 5;
+                return utils.getAgent().getCollectedRedGems() < RedGemTile.MAXIMUM_ACHIEVABLE_TIMES.getValue();
             }
             else if (goalTile.getType().equals(TileType.BLUE_GEM)) {
-                return utils.getMyAgent().getCollectedBlueGems() < 4;
+                return utils.getAgent().getCollectedBlueGems() < BlueGemTile.MAXIMUM_ACHIEVABLE_TIMES.getValue();
             }
             else throw new IllegalStateException("goal should be gem!");
         }
