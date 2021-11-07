@@ -14,6 +14,7 @@ public class Agent extends BaseAgent {
     private int collectedGreenGems;
     private int collectedRedGems;
     private int collectedBlueGems;
+    private long timeout;
     private Set<Tile> blockedGems;
 
     public Agent() {
@@ -26,6 +27,7 @@ public class Agent extends BaseAgent {
         this.collectedGreenGems = 0;
         this.collectedRedGems = 0;
         this.collectedBlueGems = 0;
+        this.timeout = 1000000000;
         this.blockedGems = new HashSet<>();
     }
 
@@ -89,5 +91,13 @@ public class Agent extends BaseAgent {
 
     public void setBlockedGems(Set<Tile> blockedGems) {
         this.blockedGems = blockedGems;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 }

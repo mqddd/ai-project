@@ -18,14 +18,18 @@ public class RoutingAnalyzer {
 
     public BaseAgent.Action getNextAction(Tile myAgentTile, Tile goalTile) {
         BFSSearchResponse bfsSearchResponse = bfsSearch(myAgentTile, goalTile);
-        while (bfsSearchResponse == null) {
+        long startTime = System.nanoTime();
+        long endTime = System.nanoTime();
+        while (bfsSearchResponse == null && (endTime - startTime) < (0.9 * utils.getAgent().getTimeout())) {
             utils.getAgent().getBlockedGems().add(goalTile);
             utils.resetProperties();
             goalTile = orderingAnalyzer.getOptimalGoal(myAgentTile);
             if (goalTile == null)
                 break;
             bfsSearchResponse = bfsSearch(myAgentTile, goalTile);
+            endTime = System.nanoTime();
         }
+
         List<Tile> path;
         if (bfsSearchResponse != null) {
             path = bfsSearchResponse.getPath();
@@ -51,12 +55,13 @@ public class RoutingAnalyzer {
                         throw new IllegalStateException("goal type should be of gem!");
                 }
             }
-            System.out.println(utils.getAgent().getTurnCount());
+            System.out.println("turn: " + utils.getAgent().getTurnCount());
             System.out.println("agent: " + myAgentTile.toString());
             System.out.println("goal: " + goalTile.toString());
             System.out.println("path: " + path);
             System.out.println("cost to gaol: " + bfsSearchResponse.getCost());
             System.out.println("agent score: " + utils.getAgent().getAgentScores()[0]);
+            System.out.println("time elapsed: " + (endTime - startTime));
             System.out.println("_______________________________________");
         } else {
             return BaseAgent.Action.NoOp;

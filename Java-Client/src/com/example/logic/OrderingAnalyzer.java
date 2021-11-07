@@ -23,11 +23,22 @@ public class OrderingAnalyzer {
 
         int minCost = Integer.MAX_VALUE;
         Tile optimalGoal = null;
+        if (!allGems.isEmpty()) {
+            if (possibleToGetGem(myAgentTile, allGems.get(0)))
+                optimalGoal = allGems.get(0);
+        } else return null;
         for (Tile gem : allGems) {
             int costOfGem = this.heuristic(myAgentTile, gem);
-            if (costOfGem < minCost && possibleToGetGem(myAgentTile, gem)) {
-                minCost = costOfGem;
-                optimalGoal = gem;
+            if (costOfGem <= minCost && possibleToGetGem(myAgentTile, gem)) {
+                if (costOfGem == minCost) {
+                    if (optimalGoal == null) continue;
+                    if (gem.getType().ordinal() > optimalGoal.getType().ordinal()) {
+                        optimalGoal = gem;
+                    }
+                } else {
+                    minCost = costOfGem;
+                    optimalGoal = gem;
+                }
             }
         }
 
