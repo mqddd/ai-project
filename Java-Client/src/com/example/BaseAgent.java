@@ -16,7 +16,7 @@ public abstract class BaseAgent {
     private char character;
     private int[] agentScores;
     private String[][] grid;
-    private int[] agentGems;
+    private int[][] agentGems;
 
     public static String DEFAULT_SERVER_IP = "127.0.0.1";
     public static int DEFAULT_SERVER_PORT = 9921;
@@ -92,6 +92,7 @@ public abstract class BaseAgent {
             this.agentCount = Integer.parseInt(dataArray[6]);
             this.trapCount = Integer.parseInt(dataArray[7]);
             this.agentScores = new int[agentCount];
+            this.agentGems = new int[agentCount][4];
             this.printWriter.println("CONFIRM");
         } catch (IOException e) {
             e.printStackTrace();
@@ -125,7 +126,11 @@ public abstract class BaseAgent {
         for (int i = 0; i < this.agentCount; i++, count++) {
             agentScores[i] = Integer.parseInt(dataArray[count]);
         }
-        System.out.println(data);
+        for (int i = 0; i < this.agentCount; i++) {
+            for (int j = 0; j < 4; j++, count++) {
+                this.agentGems[i][j] = Integer.parseInt(dataArray[count]);
+            }
+        }
         this.grid = new String[gridHeight][gridWidth];
         for (int i = 0; i < gridHeight; i++) {
             for (int j = 0; j < gridWidth; j++, count++) {
