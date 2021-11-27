@@ -65,6 +65,14 @@ public abstract class BaseAgent {
         return grid;
     }
 
+    public int[][] getAgentGems() {
+        return agentGems;
+    }
+
+    public void setAgentGems(int[][] agentGems) {
+        this.agentGems = agentGems;
+    }
+
     public BaseAgent() {
         this(DEFAULT_SERVER_IP, DEFAULT_SERVER_PORT);
     }
