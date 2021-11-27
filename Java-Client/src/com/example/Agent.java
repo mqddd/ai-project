@@ -3,17 +3,17 @@ package com.example;
 import com.example.model.Tile;
 import com.example.logic.OrderingAnalyzer;
 import com.example.logic.RoutingAnalyzer;
+import com.example.model.TileType;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Agent extends BaseAgent {
 
-    private int collectedYellowGems;
-    private int collectedGreenGems;
-    private int collectedRedGems;
-    private int collectedBlueGems;
+    private Map<TileType, Integer> collectedGemsMap;
     private long timeout;
     private Set<Tile> blockedGems;
 
@@ -23,12 +23,18 @@ public class Agent extends BaseAgent {
 
     public Agent(String serverIp, int serverPort) {
         super(serverIp, serverPort);
-        this.collectedYellowGems = 0;
-        this.collectedGreenGems = 0;
-        this.collectedRedGems = 0;
-        this.collectedBlueGems = 0;
+        this.collectedGemsMap = new HashMap();
+        initializeCollectedGemsMap();
         this.timeout = 1000000000;
         this.blockedGems = new HashSet<>();
+    }
+
+    private void initializeCollectedGemsMap() {
+        for (TileType type : TileType.values())
+            if (type.equals(TileType.YELLOW_GEM) || type.equals(TileType.GREEN_GEM)
+                || type.equals(TileType.RED_GEM) || type.equals(TileType.BLUE_GEM))
+                this.collectedGemsMap.put(type, 0);
+
     }
 
     public Agent(String serverIp) {
@@ -41,11 +47,22 @@ public class Agent extends BaseAgent {
 
     @Override
     public Action doTurn() {
+//        if (collectedGreenGems == getTurnCount() - 3 && getTurnCount() != 1)
+//            System.out.println("whyyy");
+        long startTime = System.nanoTime();
+        if (this.getTurnCount() == 10)
+            System.out.println("dd");
         Utils utils = new Utils(this);
         OrderingAnalyzer orderingAnalyzer = new OrderingAnalyzer(utils);
+//        orderingAnalyzer.printTopNearestGems(utils.getMyAgentTile());
         RoutingAnalyzer routingAnalyzer = new RoutingAnalyzer(utils, orderingAnalyzer);
-        Tile optimalGoal = orderingAnalyzer.getOptimalGoal(utils.getMyAgentTile());
-        return routingAnalyzer.getNextAction(utils.getMyAgentTile(), optimalGoal);
+//        Tile optimalGoal = orderingAnalyzer.getOptimalGoal(utils.getMyAgentTile());
+        Tile optimalGoal = orderingAnalyzer.getOptimalGoal2(utils.getMyAgentTile());
+        Action nextAction = routingAnalyzer.getNextAction(utils.getMyAgentTile(), optimalGoal);
+        long endTime = System.nanoTime();
+        System.out.println("all time elapsed: " + (endTime - startTime));
+        System.out.println("____________________________________________________");
+        return nextAction;
     }
 
     public static void main(String[] args) throws IOException {
@@ -53,36 +70,12 @@ public class Agent extends BaseAgent {
         client.play();
     }
 
-    public int getCollectedYellowGems() {
-        return collectedYellowGems;
+    public Map<TileType, Integer> getCollectedGemsMap() {
+        return collectedGemsMap;
     }
 
-    public void setCollectedYellowGems(int collectedYellowGems) {
-        this.collectedYellowGems = collectedYellowGems;
-    }
-
-    public int getCollectedGreenGems() {
-        return collectedGreenGems;
-    }
-
-    public void setCollectedGreenGems(int collectedGreenGems) {
-        this.collectedGreenGems = collectedGreenGems;
-    }
-
-    public int getCollectedRedGems() {
-        return collectedRedGems;
-    }
-
-    public void setCollectedRedGems(int collectedRedGems) {
-        this.collectedRedGems = collectedRedGems;
-    }
-
-    public int getCollectedBlueGems() {
-        return collectedBlueGems;
-    }
-
-    public void setCollectedBlueGems(int collectedBlueGems) {
-        this.collectedBlueGems = collectedBlueGems;
+    public void setCollectedGemsMap(Map<TileType, Integer> collectedGemsMap) {
+        this.collectedGemsMap = collectedGemsMap;
     }
 
     public Set<Tile> getBlockedGems() {

@@ -48,7 +48,7 @@ def get_map(map_path):
 
 
 def main():
-    Path("./game_logs").mkdir(parents=True, exist_ok=True)
+    Path("./game_logs/test-phase1-refining-orders").mkdir(parents=True, exist_ok=True)
 
     print("server is already run")
     config_path = parse_args()

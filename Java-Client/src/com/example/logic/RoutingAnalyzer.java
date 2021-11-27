@@ -20,40 +20,42 @@ public class RoutingAnalyzer {
         BFSSearchResponse bfsSearchResponse = bfsSearch(myAgentTile, goalTile);
         long startTime = System.nanoTime();
         long endTime = System.nanoTime();
+        int bfsRunTimes = 1;
         while (bfsSearchResponse == null && (endTime - startTime) < (0.9 * utils.getAgent().getTimeout())) {
             utils.getAgent().getBlockedGems().add(goalTile);
-            utils.resetProperties();
-            goalTile = orderingAnalyzer.getOptimalGoal(myAgentTile);
+            utils.refreshProperties();
+            goalTile = orderingAnalyzer.getOptimalGoal2(myAgentTile);
             if (goalTile == null)
                 break;
             bfsSearchResponse = bfsSearch(myAgentTile, goalTile);
             endTime = System.nanoTime();
+            bfsRunTimes++;
         }
 
         List<Tile> path;
         if (bfsSearchResponse != null) {
             path = bfsSearchResponse.getPath();
             if (path.size() == 1) {
-                switch (goalTile.getType()) {
-                    case YELLOW_GEM:
-                        if (utils.getAgent().getAgentScores()[0] - 1 >= YellowGemTile.REQUIRED_SCORE.getValue())
-                            utils.getAgent().setCollectedYellowGems(utils.getAgent().getCollectedYellowGems() + 1);
-                        break;
-                    case GREEN_GEM:
-                        if (utils.getAgent().getAgentScores()[0] - 1 >= GreenGemTile.REQUIRED_SCORE.getValue())
-                            utils.getAgent().setCollectedGreenGems(utils.getAgent().getCollectedGreenGems() + 1);
-                        break;
-                    case RED_GEM:
-                        if (utils.getAgent().getAgentScores()[0] - 1 >= RedGemTile.REQUIRED_SCORE.getValue())
-                            utils.getAgent().setCollectedRedGems(utils.getAgent().getCollectedRedGems() + 1);
-                        break;
-                    case BLUE_GEM:
-                        if (utils.getAgent().getAgentScores()[0] - 1 >= BlueGemTile.REQUIRED_SCORE.getValue())
-                            utils.getAgent().setCollectedBlueGems(utils.getAgent().getCollectedBlueGems() + 1);
-                        break;
-                    default:
-                        throw new IllegalStateException("goal type should be of gem!");
-                }
+//                switch (goalTile.getType()) {
+//                    case YELLOW_GEM:
+//                        if (utils.getAgent().getAgentScores()[0] - 1 >= YellowGemTile.REQUIRED_SCORE.getValue())
+//                            utils.getAgent().setCollectedGemsMap(utils.getAgent().getCollectedGemsMap().get(TileType.YELLOW_GEM) + 1);
+//                        break;
+//                    case GREEN_GEM:
+//                        if (utils.getAgent().getAgentScores()[0] - 1 >= GreenGemTile.REQUIRED_SCORE.getValue())
+//                            utils.getAgent().setCollectedGreenGems(utils.getAgent().getCollectedGemsMap().get(TileType.YELLOW_GEM) + 1);
+//                        break;
+//                    case RED_GEM:
+//                        if (utils.getAgent().getAgentScores()[0] - 1 >= RedGemTile.REQUIRED_SCORE.getValue())
+//                            utils.getAgent().setCollectedRedGems(utils.getAgent().getCollectedGemsMap().get(TileType.YELLOW_GEM) + 1);
+//                        break;
+//                    case BLUE_GEM:
+//                        if (utils.getAgent().getAgentScores()[0] - 1 >= BlueGemTile.REQUIRED_SCORE.getValue())
+//                            utils.getAgent().setCollectedBlueGems(utils.getAgent().getCollectedGemsMap().get(TileType.YELLOW_GEM) + 1);
+//                        break;
+//                    default:
+//                        throw new IllegalStateException("goal type should be gem!");
+//                }
             }
             System.out.println("turn: " + utils.getAgent().getTurnCount());
             System.out.println("agent: " + myAgentTile.toString());
@@ -62,12 +64,16 @@ public class RoutingAnalyzer {
             System.out.println("cost to gaol: " + bfsSearchResponse.getCost());
             System.out.println("agent score: " + utils.getAgent().getAgentScores()[0]);
             System.out.println("time elapsed: " + (endTime - startTime));
-            System.out.println("_______________________________________");
+            System.out.println("bfs run times: " + bfsRunTimes);
+//            System.out.println("_______________________________________");
         } else {
+            System.out.println("bfs response is null!");
             return BaseAgent.Action.NoOp;
         }
-        if (path.isEmpty())
+        if (path.isEmpty()) {
+            System.out.println("path is empty!");
             return BaseAgent.Action.NoOp;
+        }
         return getNextStep(myAgentTile, path.get(0));
     }
 
@@ -156,34 +162,18 @@ public class RoutingAnalyzer {
 
     private void addNeighborTile(List<Node> neighbors, int x, int y, Node currentNode) {
         Tile neighbor;
-        TileType type;
-        if (utils.getAgent().getGrid()[x][y].contains(TileType.EMPTY.getValue())) {
-            type = TileType.EMPTY;
-        } else if (utils.getAgent().getGrid()[x][y].equals(TileType.WALL.getValue())) {
-            type = TileType.WALL;
-        } else if (utils.getAgent().getGrid()[x][y].contains(TileType.YELLOW_GEM.getValue())) {
-            type = TileType.YELLOW_GEM;
-        } else if (utils.getAgent().getGrid()[x][y].contains(TileType.GREEN_GEM.getValue())) {
-            type = TileType.GREEN_GEM;
-        } else if (utils.getAgent().getGrid()[x][y].contains(TileType.RED_GEM.getValue())) {
-            type = TileType.RED_GEM;
-        } else if (utils.getAgent().getGrid()[x][y].contains(TileType.BLUE_GEM.getValue())) {
-            type = TileType.BLUE_GEM;
-        } else if (utils.getAgent().getGrid()[x][y].contains(TileType.TELEPORT.getValue())) {
-            type = TileType.TELEPORT;
-        } else throw new IllegalStateException("Tile type isn't known!");
+        TileType type = utils.getTileType(x, y);
         if (type != TileType.WALL) {
             neighbor = new Tile(x, y, type);
             List<Tile> cameFrom = new LinkedList<>(currentNode.cameFrom);
             cameFrom.add(neighbor);
-
             neighbors.add(new Node(currentNode.level + 1, currentNode.costUntilHere + 1,
                     cameFrom, neighbor));
         }
     }
 
     private List<Node> getTeleportNeighbors(Node currentTeleportNode) {
-        List<Tile> neighborTeleportTiles = new LinkedList<>(utils.getTeleportTiles());
+        List<Tile> neighborTeleportTiles = new LinkedList<>(utils.getTileTypeListMap().get(TileType.TELEPORT));
         neighborTeleportTiles.remove(currentTeleportNode.currentTile);
         List<Node> neighborTeleportNodes = new LinkedList<>();
         for (Tile teleportTile : neighborTeleportTiles) {

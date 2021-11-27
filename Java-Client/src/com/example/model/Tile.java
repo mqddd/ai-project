@@ -3,7 +3,13 @@ package com.example.model;
 import java.util.Objects;
 
 public class Tile {
-
+    /*
+        although in euclidean space x is horizontal vector
+        and y is vertical vector, here we assume x is as the
+        same as i which is vertical index of a matrix and
+        y is as the same as j which is horizontal index of
+        a matrix.
+     */
     private int x;
     private int y;
     private TileType type;

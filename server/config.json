@@ -1,10 +1,10 @@
 {
-  "map": "map1_14.txt",
+  "map": "map1_6.txt",
   "server_ip": "127.0.0.1",
   "server_port": 9921,
-  "player_count": 1,
+  "player_count": 2,
   "time_out": 100000,
-  "init_score": 1000,
+  "init_score": 45,
   "trap_count": 3,
   "turn_count": 100,
   "init_random_location": false

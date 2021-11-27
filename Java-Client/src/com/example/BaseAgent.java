@@ -16,6 +16,7 @@ public abstract class BaseAgent {
     private char character;
     private int[] agentScores;
     private String[][] grid;
+    private int[] agentGems;
 
     public static String DEFAULT_SERVER_IP = "127.0.0.1";
     public static int DEFAULT_SERVER_PORT = 9921;
@@ -124,6 +125,7 @@ public abstract class BaseAgent {
         for (int i = 0; i < this.agentCount; i++, count++) {
             agentScores[i] = Integer.parseInt(dataArray[count]);
         }
+        System.out.println(data);
         this.grid = new String[gridHeight][gridWidth];
         for (int i = 0; i < gridHeight; i++) {
             for (int j = 0; j < gridWidth; j++, count++) {
