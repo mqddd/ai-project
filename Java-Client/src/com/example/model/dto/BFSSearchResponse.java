@@ -1,18 +1,20 @@
-package com.example.model;
+package com.example.model.dto;
+
+import com.example.model.Tile;
 
 import java.util.List;
 
 public class BFSSearchResponse {
     private List<Tile> path;
     private int cost;
-    private Tile goal;
+    private Tile destination;
     private Tile source;
     private int goalLevel;
 
-    public BFSSearchResponse(List<Tile> path, int cost, Tile goal, Tile source, int goalLevel) {
+    public BFSSearchResponse(List<Tile> path, int cost, Tile destination, Tile source, int goalLevel) {
         this.path = path;
         this.cost = cost;
-        this.goal = goal;
+        this.destination = destination;
         this.source = source;
         this.goalLevel = goalLevel;
     }
@@ -33,12 +35,12 @@ public class BFSSearchResponse {
         this.cost = cost;
     }
 
-    public Tile getGoal() {
-        return goal;
+    public Tile getDestination() {
+        return destination;
     }
 
-    public void setGoal(Tile goal) {
-        this.goal = goal;
+    public void setDestination(Tile destination) {
+        this.destination = destination;
     }
 
     public Tile getSource() {

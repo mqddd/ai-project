@@ -342,6 +342,6 @@ class Game:
             self.turn_log(agent_id=None, finish=True, winner_id=None, report=f"finish! The game ended in a draw")
 
         now_time = datetime.now()
-        with open(f"game_logs/{now_time.month}_{now_time.day}_{now_time.hour}_{now_time.minute}_{now_time.second}.json",
+        with open(f"game_logs/test-phase1-refining-orders/{now_time.month}_{now_time.day}_{now_time.hour}_{now_time.minute}_{now_time.second}.json",
                   "w") as file:
             json.dump(self.turn_logs, file)
