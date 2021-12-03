@@ -14,6 +14,11 @@ public class Tile {
     private int y;
     private TileType type;
 
+    public Tile() {
+        this.x = -1;
+        this.y = -1;
+    }
+
     public Tile(int x, int y, TileType type) {
         this.x = x;
         this.y = y;

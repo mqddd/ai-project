@@ -3,14 +3,15 @@ package com.example.logic;
 import com.example.BaseAgent;
 import com.example.Utils;
 import com.example.model.*;
-import com.example.model.dto.BFSSearchResponse;
+import com.example.model.dto.SimpleBFSResponse;
 
 import java.util.*;
 
 public class RoutingAnalyzer {
 
-    private Utils utils;
-    private OrderingAnalyzer orderingAnalyzer;
+    private final Utils utils;
+    private final OrderingAnalyzer orderingAnalyzer;
+    private final static float MAX_TIME_FACTOR = 0.9f;
 
     public RoutingAnalyzer(Utils utils, OrderingAnalyzer orderingAnalyzer) {
         this.utils = utils;
@@ -18,32 +19,32 @@ public class RoutingAnalyzer {
     }
 
     public BaseAgent.Action getNextAction(Tile myAgentTile, Tile goalTile) {
-        BFSSearchResponse bfsSearchResponse = utils.bfsSearch(myAgentTile, goalTile);
+        SimpleBFSResponse simpleBfsResponse = utils.bfsSearch(myAgentTile, goalTile, utils.getAgent().getGrid());
         long startTime = System.nanoTime();
         long endTime = System.nanoTime();
         int bfsRunTimes = 1;
-        while (bfsSearchResponse == null && (endTime - startTime) < (0.9 * utils.getAgent().getTimeout())) {
+        while (simpleBfsResponse == null && (endTime - startTime) < (MAX_TIME_FACTOR * utils.getAgent().getTimeout())) {
             utils.getAgent().getBlockedGems().add(goalTile);
             utils.refreshTileTypeListMap();
             goalTile = orderingAnalyzer.getOptimalGoal(myAgentTile);
             if (goalTile == null)
                 break;
-            bfsSearchResponse = utils.bfsSearch(myAgentTile, goalTile);
+            simpleBfsResponse = utils.bfsSearch(myAgentTile, goalTile, utils.getAgent().getGrid());
             endTime = System.nanoTime();
             bfsRunTimes++;
         }
 
         List<Tile> path;
-        if (bfsSearchResponse != null) {
-            path = bfsSearchResponse.getPath();
-            System.out.println("turn: " + utils.getAgent().getTurnCount());
-            System.out.println("agent: " + myAgentTile.toString());
-            System.out.println("goal: " + goalTile.toString());
-            System.out.println("path: " + path);
-            System.out.println("cost to gaol: " + bfsSearchResponse.getCost());
-            System.out.println("agent score: " + utils.getAgent().getAgentScores()[0]);
-            System.out.println("time elapsed: " + (endTime - startTime));
-            System.out.println("bfs run times: " + bfsRunTimes);
+        if (simpleBfsResponse != null) {
+            path = simpleBfsResponse.getPath();
+//            System.out.println("turn: " + utils.getAgent().getTurnCount());
+//            System.out.println("agent: " + myAgentTile.toString());
+//            System.out.println("goal: " + goalTile.toString());
+//            System.out.println("path: " + path);
+//            System.out.println("cost to gaol: " + simpleBfsResponse.getCost());
+//            System.out.println("agent score: " + utils.getAgent().getAgentScores()[0]);
+//            System.out.println("time elapsed: " + (endTime - startTime));
+//            System.out.println("bfs run times: " + bfsRunTimes);
         } else {
             System.out.println("bfs response is null!");
             return BaseAgent.Action.NoOp;
