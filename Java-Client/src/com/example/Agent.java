@@ -46,30 +46,30 @@ public class Agent extends BaseAgent {
         OrderingAnalyzer orderingAnalyzer = new OrderingAnalyzer(utils);
         RoutingAnalyzer routingAnalyzer = new RoutingAnalyzer(utils, orderingAnalyzer);
 
-//        AdversarialAnalyzer adversarialAnalyzer = new AdversarialAnalyzer(utils, orderingAnalyzer);
-//        Action action = adversarialAnalyzer.getNextAction();
+        AdversarialAnalyzer adversarialAnalyzer = new AdversarialAnalyzer(utils, orderingAnalyzer);
+        Action action = adversarialAnalyzer.getNextAction();
 
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
         System.out.println("time elapsed: " + timeElapsed);
         Action nextAction = Action.NoOp;
-//        if (timeElapsed > 0.9 * this.timeout) {
+        if (timeElapsed > 0.9 * this.timeout) {
             Tile optimalGoal = orderingAnalyzer.getOptimalGoal(utils.getMyAgentTile());
             nextAction = routingAnalyzer.getNextAction(utils.getMyAgentTile(), optimalGoal);
-//        }
+        }
         if (timeElapsed > overallMaxTimeElapsed)
             overallMaxTimeElapsed = timeElapsed;
         System.out.println("overall max time elapsed: " + overallMaxTimeElapsed);
         System.out.println("____________________________________________________");
 
-//
-//        if (action != null) {
-//            return action;
-//        }
-//        else {
+
+        if (action != null) {
+            return action;
+        }
+        else {
             System.out.println("**************** adversarial action was null! ***************");
             return nextAction;
-//        }
+        }
     }
 
     public static void main(String[] args) throws IOException {
