@@ -435,8 +435,8 @@ public class Utils {
         return possibleToGetGemByHeuristicDistance(agentTile, goalTile, this.opponentCollectedGemsMap, opponentScore);
     }
 
-    public boolean possibleToGetGemByHeuristicDistance(Tile agentTile, Tile gemTile, Map<TileType,
-            Integer> collectedGemsMap, int agentScore) {
+    public boolean possibleToGetGemByHeuristicDistance(Tile agentTile, Tile gemTile,
+                                                       Map<TileType, Integer> collectedGemsMap, int agentScore) {
         int minCostToGoal = heuristic(agentTile, gemTile);
         int requiredScore = this.getGemRequiredScoreByType(gemTile.getType());
         if ((agentScore - minCostToGoal) >= requiredScore) {
