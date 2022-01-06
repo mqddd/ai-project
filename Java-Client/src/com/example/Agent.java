@@ -1,9 +1,7 @@
 package com.example;
 
-import com.example.logic.AdversarialAnalyzer;
+import com.example.logic.ReinforcementAnalyzer;
 import com.example.model.Tile;
-import com.example.logic.OrderingAnalyzer;
-import com.example.logic.RoutingAnalyzer;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -15,7 +13,7 @@ public class Agent extends BaseAgent {
     private Set<Tile> blockedGems;
     private int trapUsed;
     private int remainedTrap;
-    private long overallMaxTimeElapsed;
+    private ReinforcementAnalyzer reinforcementAnalyzer;
 
     public Agent() {
         super();
@@ -27,7 +25,7 @@ public class Agent extends BaseAgent {
         this.blockedGems = new HashSet<>();
         this.trapUsed = 0;
         this.remainedTrap = this.getTrapCount();
-        this.overallMaxTimeElapsed = Integer.MIN_VALUE;
+        this.reinforcementAnalyzer = new ReinforcementAnalyzer();
     }
 
     public Agent(String serverIp) {
@@ -40,36 +38,11 @@ public class Agent extends BaseAgent {
 
     @Override
     public Action doTurn() {
-        long startTime = System.nanoTime();
-        this.remainedTrap = this.getTrapCount() - this.trapUsed;
         Utils utils = new Utils(this);
-        OrderingAnalyzer orderingAnalyzer = new OrderingAnalyzer(utils);
-        RoutingAnalyzer routingAnalyzer = new RoutingAnalyzer(utils, orderingAnalyzer);
-
-        AdversarialAnalyzer adversarialAnalyzer = new AdversarialAnalyzer(utils, orderingAnalyzer);
-        Action action = adversarialAnalyzer.getNextAction();
-
-        long endTime = System.nanoTime();
-        long timeElapsed = endTime - startTime;
-        System.out.println("time elapsed: " + timeElapsed);
-        Action nextAction = Action.NoOp;
-        if (timeElapsed > 0.9 * this.timeout) {
-            Tile optimalGoal = orderingAnalyzer.getOptimalGoal(utils.getMyAgentTile());
-            nextAction = routingAnalyzer.getNextAction(utils.getMyAgentTile(), optimalGoal);
-        }
-        if (timeElapsed > overallMaxTimeElapsed)
-            overallMaxTimeElapsed = timeElapsed;
-        System.out.println("overall max time elapsed: " + overallMaxTimeElapsed);
-        System.out.println("____________________________________________________");
-
-
-        if (action != null) {
-            return action;
-        }
-        else {
-            System.out.println("**************** adversarial action was null! ***************");
-            return nextAction;
-        }
+        this.reinforcementAnalyzer.updateParams(utils);
+        this.reinforcementAnalyzer.qStep();
+        Tile agentTile = utils.getMyAgentTile();
+        return this.reinforcementAnalyzer.action(agentTile.getX(), agentTile.getY());
     }
 
     public static void main(String[] args) throws IOException {
