@@ -11,6 +11,7 @@ public class ReinforcementAnalyzer {
 
     private Utils utils;
     private final static double EPSILON = 0.9;
+    private final static double EPSILON_DECAY = 0.9998;
     private final static double LEARNING_RATE = 0.1;
     private final static double DISCOUNT_FACTOR = 0.95;
     private final static int NUMBER_OF_ACTIONS = 5;

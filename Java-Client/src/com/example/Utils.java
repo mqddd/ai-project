@@ -1,10 +1,7 @@
 package com.example;
 
 import com.example.model.*;
-import com.example.model.dto.SimpleBFSResponse;
-import com.example.model.dto.ComplexBFSNode;
-import com.example.model.dto.SimpleBFSNode;
-import com.example.model.dto.MiniMaxState;
+import com.example.model.dto.*;
 
 import java.util.*;
 
@@ -649,6 +646,15 @@ public class Utils {
         HashMap<TileType, Integer> newMap = new HashMap<>();
         Set<Map.Entry<TileType, Integer>> entries = originalMap.entrySet();
         for (Map.Entry<TileType, Integer> entry : entries) {
+            newMap.put(entry.getKey(), entry.getValue());
+        }
+        return newMap;
+    }
+
+    public HashMap<QStateAction, Float> qTableDeepCopy(HashMap<QStateAction, Float> originalMap) {
+        HashMap<QStateAction, Float> newMap = new HashMap<>();
+        Set<Map.Entry<QStateAction, Float>> entries = originalMap.entrySet();
+        for (Map.Entry<QStateAction, Float> entry : entries) {
             newMap.put(entry.getKey(), entry.getValue());
         }
         return newMap;

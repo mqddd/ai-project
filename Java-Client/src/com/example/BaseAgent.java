@@ -147,7 +147,7 @@ public abstract class BaseAgent {
         }
     }
 
-    protected abstract Action doTurn();
+    protected abstract Action doTurn() throws IOException;
 
     public void play() throws IOException {
         connect();
